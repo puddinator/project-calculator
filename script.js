@@ -1,17 +1,17 @@
 function add(a, b) {
-    return parseInt(a) + parseInt(b);
+    return Math.round((a + b) * 100) / 100;
 }
 
 function subtract(a, b) {
-    return parseInt(a) - parseInt(b);
+    return Math.round((a - b) * 100) / 100;
 }
 
 function multiply(a, b) {
-    return parseInt(a) * parseInt(b);
+    return Math.round((a * b) * 100) / 100;
 }
 
 function divide(a, b) {
-    return parseInt(a) / parseInt(b);
+    return Math.round((a / b) * 100) / 100;
 }
 
 function operate(a, operator, b) {
@@ -42,13 +42,20 @@ let firstNumber = 0,
     calculationComplete = false;
 
 numbers.forEach(number => number.addEventListener("click", () => {
-        if (receivedOperatorString == false) {
-            firstNumber = number.textContent;
-            display.textContent = number.textContent;
+        if (receivedOperatorString == false && calculationComplete == false) {
+            firstNumber *= 10;
+            firstNumber += parseInt(number.textContent);
+            display.textContent = firstNumber;
             receivedFirstNumber = true;
+        } else if (receivedOperatorString == false && calculationComplete == true) {
+            firstNumber = parseInt(number.textContent);
+            display.textContent = firstNumber;
+            receivedFirstNumber = true;
+            calculationComplete = false;
         } else {
-            secondNumber = number.textContent;
-            display.textContent = number.textContent;
+            secondNumber *= 10;
+            secondNumber += parseInt(number.textContent);
+            display.textContent = secondNumber;
             receivedSecondNumber = true;
         }
     })
@@ -64,7 +71,15 @@ operators.forEach(operator => operator.addEventListener("click", () => {
 );
 
 equal.addEventListener("click", () => {
-    display.textContent = operate(firstNumber, operatorString, secondNumber);
+    if (receivedSecondNumber == true) {
+        firstNumber = operate(firstNumber, operatorString, secondNumber);
+        display.textContent = firstNumber;
+        secondNumber = 0,
+        receivedSecondNumber = false,
+        operatorString = '',
+        receivedOperatorString = false,
+        calculationComplete = true;
+    }
 });
 
 clear.addEventListener("click", () => {
